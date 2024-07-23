@@ -144,8 +144,7 @@ class WebcontentConverter {
     bool autoClosePage = true,
     int scale = 3,
   }) async {
-    final div = html.document.createElement('div') as html.DivElement
-      ..setInnerHtml(content, validator: AllowAll());
+    final div = html.document.createElement('div') as html.DivElement..setInnerHtml(content, validator: AllowAll());
     div.style.color = 'black';
     div.style.background = 'white';
     html.document.body?.children.add(div);
@@ -228,8 +227,7 @@ class WebcontentConverter {
     String? executablePath,
     bool autoClosePage = true,
   }) async {
-    final div = html.document.createElement('div') as html.DivElement
-      ..setInnerHtml(content, validator: AllowAll());
+    final div = html.document.createElement('div') as html.DivElement..setInnerHtml(content, validator: AllowAll());
     div.style.color = 'black';
     div.style.background = 'white';
     html.document.body?.children.add(div);
@@ -300,16 +298,12 @@ class WebcontentConverter {
     double? duration,
   }) async {
     try {
-      const windowFeatures =
-          'left=100,top=100,width=800,height=800,popup=yes,_self';
-      final js.JsObject printWindow = js.context
-          .callMethod('open', [url ?? '', 'mozillaWindow', windowFeatures]);
-      final js.JsObject? document =
-          printWindow.hasProperty('document') ? printWindow['document'] : null;
+      const windowFeatures = 'left=100,top=100,width=800,height=800,popup=yes,_self';
+      final js.JsObject printWindow = js.context.callMethod('open', [url ?? '', 'mozillaWindow', windowFeatures]);
+      final js.JsObject? document = printWindow.hasProperty('document') ? printWindow['document'] : null;
       // ref: https://developer.mozilla.org/en-US/docs/Web/API/Document
 
-      final js.JsObject? window =
-          printWindow.hasProperty('window') ? printWindow['window'] : null;
+      final js.JsObject? window = printWindow.hasProperty('window') ? printWindow['window'] : null;
       // ref: https://developer.mozilla.org/en-US/docs/Web/API/Window
 
       if (content != null) {

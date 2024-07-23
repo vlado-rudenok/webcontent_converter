@@ -56,8 +56,7 @@ class ContentToImageScreenState extends State<ContentToImageScreen> {
                   Container(
                     width: 400,
                     alignment: Alignment.topCenter,
-                    decoration:
-                        BoxDecoration(border: Border.all(color: Colors.blue)),
+                    decoration: BoxDecoration(border: Border.all(color: Colors.blue)),
                     child: Image.memory(_bytes!),
                   ),
               ],
@@ -70,13 +69,10 @@ class ContentToImageScreenState extends State<ContentToImageScreen> {
   Future<void> _convert() async {
     final stopwatch = Stopwatch()..start();
     final bytes = await WebcontentConverter.contentToImage(
-      content: _counter.isEven
-          ? Demo.getShortReceiptContent()
-          : Demo.getReceiptContent(),
+      content: _counter.isEven ? Demo.getShortReceiptContent() : Demo.getReceiptContent(),
       executablePath: WebViewHelper.executablePath(),
     );
-    WebcontentConverter.logger
-        .info('completed executed in ${stopwatch.elapsed}');
+    WebcontentConverter.logger.info('completed executed in ${stopwatch.elapsed}');
     setState(() => _counter += 1);
     if (bytes.isNotEmpty) {
       await _saveFile(bytes);

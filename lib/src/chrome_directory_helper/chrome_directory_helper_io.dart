@@ -55,8 +55,7 @@ class ChromeDesktopDirectoryHelper {
       tagetDirectory.createSync(recursive: true);
     }
 
-    final executablePath =
-        p.joinAll([targetPath, await getChromeExecutablePath()]);
+    final executablePath = p.joinAll([targetPath, await getChromeExecutablePath()]);
 
     /// print("targetPath $targetPath");
     /// print("getExecutablePath $getExecutablePath");
@@ -83,8 +82,7 @@ class ChromeDesktopDirectoryHelper {
         println('assetPath $assetPath0');
 
         final value = await rootBundle.load(assetPath0!);
-        final wzzip =
-            value.buffer.asUint8List(value.offsetInBytes, value.lengthInBytes);
+        final wzzip = value.buffer.asUint8List(value.offsetInBytes, value.lengthInBytes);
         zipFile.writeAsBytesSync(wzzip);
       }
 

@@ -11,8 +11,7 @@ pp.Page? windowBrowserPage;
 
 /// [WebcontentConverter] will convert html, html file, web uri, into raw bytes image or pdf file
 class WebcontentConverter {
-  static const MethodChannel _channel =
-      MethodChannel('webcontent_converter');
+  static const MethodChannel _channel = MethodChannel('webcontent_converter');
 
   static Future<String?> get platformVersion async {
     final version = await _channel.invokeMethod('getPlatformVersion');
@@ -93,7 +92,9 @@ class WebcontentConverter {
 
   static Future<String?> filePathToPdf({
     required String path,
-    required String savedPath, required PaperFormat format, double duration = 2000,
+    required String savedPath,
+    required PaperFormat format,
+    double duration = 2000,
     PdfMargins? margins,
     String? executablePath,
   }) async {
@@ -103,7 +104,9 @@ class WebcontentConverter {
 
   static Future<String?> webUriToPdf({
     required String uri,
-    required String savedPath, required PaperFormat format, double duration = 2000,
+    required String savedPath,
+    required PaperFormat format,
+    double duration = 2000,
     PdfMargins? margins,
     String? executablePath,
   }) async {
@@ -113,7 +116,9 @@ class WebcontentConverter {
 
   static Future<String?> contentToPDF({
     required String content,
-    required String savedPath, required PaperFormat format, double duration = 2000,
+    required String savedPath,
+    required PaperFormat format,
+    double duration = 2000,
     PdfMargins? margins,
     String? executablePath,
     bool autoClosePage = true,
@@ -123,14 +128,22 @@ class WebcontentConverter {
   }
 
   /// [WevView]
-  static Widget embedWebView(
-      {String? url, String? content, double? width, double? height,}) {
+  static Widget embedWebView({
+    String? url,
+    String? content,
+    double? width,
+    double? height,
+  }) {
     UnimplementedError('webivew');
     return Container();
   }
 
-  static Future<bool> printPreview(
-      {String? url, String? content, bool autoClose = true, double? duration,}) {
+  static Future<bool> printPreview({
+    String? url,
+    String? content,
+    bool autoClose = true,
+    double? duration,
+  }) {
     UnimplementedError('printPreview');
     return Future.value(false);
   }

@@ -23,20 +23,17 @@ class HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               title: const Text('content to image'),
-              onTap: () async =>
-                  Navigator.of(context).pushNamed('/content_image_screen'),
+              onTap: () async => Navigator.of(context).pushNamed('/content_image_screen'),
               trailing: const Icon(Icons.arrow_right),
             ),
             ListTile(
               title: const Text('weburi to image'),
-              onTap: () async =>
-                  Navigator.of(context).pushNamed('/weburi_image_screen'),
+              onTap: () async => Navigator.of(context).pushNamed('/weburi_image_screen'),
               trailing: const Icon(Icons.arrow_right),
             ),
             ListTile(
               title: const Text('File path to image'),
-              onTap: () async =>
-                  Navigator.of(context).pushNamed('/path_image_screen'),
+              onTap: () async => Navigator.of(context).pushNamed('/path_image_screen'),
               trailing: const Icon(Icons.arrow_right),
             ),
             const ListTile(
@@ -45,32 +42,27 @@ class HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               title: const Text('content to pdf'),
-              onTap: () async =>
-                  Navigator.of(context).pushNamed('/content_pdf_screen'),
+              onTap: () async => Navigator.of(context).pushNamed('/content_pdf_screen'),
               trailing: const Icon(Icons.arrow_right),
             ),
             ListTile(
               title: const Text('weburi to pdf'),
-              onTap: () async =>
-                  Navigator.of(context).pushNamed('/weburi_pdf_screen'),
+              onTap: () async => Navigator.of(context).pushNamed('/weburi_pdf_screen'),
               trailing: const Icon(Icons.arrow_right),
             ),
             ListTile(
               title: const Text('file path to pdf'),
-              onTap: () async =>
-                  Navigator.of(context).pushNamed('/path_pdf_screen'),
+              onTap: () async => Navigator.of(context).pushNamed('/path_pdf_screen'),
               trailing: const Icon(Icons.arrow_right),
             ),
             ListTile(
               title: const Text('bluetooth device screen'),
-              onTap: () async =>
-                  Navigator.of(context).pushNamed('/bluetooth_device_screen'),
+              onTap: () async => Navigator.of(context).pushNamed('/bluetooth_device_screen'),
               trailing: const Icon(Icons.bluetooth_connected),
             ),
             ListTile(
               title: const Text('webview screen'),
-              onTap: () async =>
-                  Navigator.of(context).pushNamed('/webview_screen'),
+              onTap: () async => Navigator.of(context).pushNamed('/webview_screen'),
               trailing: const Icon(Icons.open_in_browser_outlined),
             ),
           ],

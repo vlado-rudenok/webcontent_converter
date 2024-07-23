@@ -128,6 +128,5 @@ class PdfMargins {
       };
 
   @override
-  String toString() =>
-      'PdfMargins.inches(top: $top, bottom: $bottom, left: $left, right: $right)';
+  String toString() => 'PdfMargins.inches(top: $top, bottom: $bottom, left: $left, right: $right)';
 }

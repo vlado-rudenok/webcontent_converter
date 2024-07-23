@@ -13,8 +13,7 @@ void main() async {
     await windowManager.ensureInitialized();
 
     /// ensure brower is initialized
-    final executablePath =
-        await ChromeDesktopDirectoryHelper.saveChromeFromAssetToApp();
+    final executablePath = await ChromeDesktopDirectoryHelper.saveChromeFromAssetToApp();
     WebViewHelper.customBrowserPath = [executablePath];
     println('executablePath $executablePath');
     await WebcontentConverter.ensureInitialized(executablePath: executablePath);

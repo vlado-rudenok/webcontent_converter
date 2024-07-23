@@ -51,8 +51,7 @@ class WebcontentConverter {
         );
       }
     } else if (io.Platform.isAndroid || io.Platform.isIOS) {
-      preloadBytes =
-          await contentToImage(content: content ?? Demo.getReceiptContent());
+      preloadBytes = await contentToImage(content: content ?? Demo.getReceiptContent());
     }
 
     WebcontentConverter.logger.debug('webcontent converter initialized');
@@ -62,8 +61,7 @@ class WebcontentConverter {
     bool isClosePage = true,
     bool isCloseBrower = true,
   }) async {
-    WebcontentConverter.logger
-        .debug('webcontent converter deinitWebcontentConverter');
+    WebcontentConverter.logger.debug('webcontent converter deinitWebcontentConverter');
     if (isCloseBrower) {
       await windowBrower?.close();
     }
@@ -201,21 +199,17 @@ class WebcontentConverter {
             if (windowBrower == null || windowBrower?.isConnected != true) {
               windowBrower = await pp.puppeteer.launch(
                 headless: true,
-                executablePath:
-                    executablePath ?? WebViewHelper.executablePath(),
+                executablePath: executablePath ?? WebViewHelper.executablePath(),
               );
             }
 
             /// if window browser page is null
             windowBrowserPage = await windowBrower!.newPage();
             await windowBrowserPage.setContent(content, wait: pp.Until.load);
-            await windowBrowserPage
-                .setViewport(pp.DeviceViewport(deviceScaleFactor: scale));
+            await windowBrowserPage.setViewport(pp.DeviceViewport(deviceScaleFactor: scale));
             await windowBrowserPage.emulateMediaType(pp.MediaType.print);
-            final offsetHeight =
-                await windowBrowserPage.evaluate('document.body.offsetHeight');
-            final offsetWidth =
-                await windowBrowserPage.evaluate('document.body.offsetWidth');
+            final offsetHeight = await windowBrowserPage.evaluate('document.body.offsetHeight');
+            final offsetWidth = await windowBrowserPage.evaluate('document.body.offsetWidth');
             results = await windowBrowserPage.screenshot(
               format: pp.ScreenshotFormat.png,
               clip: pp.Rectangle.fromPoints(
@@ -361,10 +355,7 @@ class WebcontentConverter {
     WebcontentConverter.logger.info(arguments['format']);
     String? result;
     try {
-      if ((io.Platform.isMacOS ||
-              io.Platform.isLinux ||
-              io.Platform.isWindows) &&
-          WebViewHelper.isChromeAvailable) {
+      if ((io.Platform.isMacOS || io.Platform.isLinux || io.Platform.isWindows) && WebViewHelper.isChromeAvailable) {
         pp.Page? windowBrowserPage;
         try {
           WebcontentConverter.logger.info('Desktop support');
@@ -378,8 +369,7 @@ class WebcontentConverter {
           /// if window browser page is null
           windowBrowserPage = await windowBrower!.newPage();
 
-          await windowBrowserPage
-              .setViewport(const pp.DeviceViewport(width: 800, height: 1000));
+          await windowBrowserPage.setViewport(const pp.DeviceViewport(width: 800, height: 1000));
 
           /// await windowBrowserPage.emulateMediaType(pp.MediaType.print);
           /// await windowBrowserPage.emulate(pp.puppeteer.devices.laptopWithMDPIScreen);
@@ -454,23 +444,21 @@ class WebcontentConverter {
                     viewType: viewType,
                     surfaceFactory: (context, controller) => AndroidViewSurface(
                       controller: controller as AndroidViewController,
-                      gestureRecognizers: const <Factory<
-                          OneSequenceGestureRecognizer>>{},
+                      gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
                       hitTestBehavior: PlatformViewHitTestBehavior.opaque,
                     ),
-                    onCreatePlatformView: (params) =>
-                        PlatformViewsService.initSurfaceAndroidView(
+                    onCreatePlatformView: (params) => PlatformViewsService.initSurfaceAndroidView(
                       id: params.id,
                       viewType: viewType,
                       layoutDirection: TextDirection.ltr,
                       creationParams: creationParams,
                       creationParamsCodec: const StandardMessageCodec(),
                     )
-                          ..addOnPlatformViewCreatedListener(
-                            params.onPlatformViewCreated,
-                          )
-                          // ignore: discarded_futures
-                          ..create(),
+                      ..addOnPlatformViewCreatedListener(
+                        params.onPlatformViewCreated,
+                      )
+                      // ignore: discarded_futures
+                      ..create(),
                   ),
                 ),
               );
@@ -507,10 +495,7 @@ class WebcontentConverter {
         'duration': duration,
         'autoClose': autoClose,
       };
-      if ((io.Platform.isMacOS ||
-              io.Platform.isLinux ||
-              io.Platform.isWindows) &&
-          WebViewHelper.isChromeAvailable) {
+      if ((io.Platform.isMacOS || io.Platform.isLinux || io.Platform.isWindows) && WebViewHelper.isChromeAvailable) {
         final browser = await pp.puppeteer.launch(
           executablePath: WebViewHelper.executablePath(),
           headless: false,
@@ -524,8 +509,7 @@ class WebcontentConverter {
           ignoreDefaultArgs: ['--enable-automation'],
         );
         final page = (await browser.pages).first;
-        await page
-            .setViewport(const pp.DeviceViewport(width: 800, height: 1000));
+        await page.setViewport(const pp.DeviceViewport(width: 800, height: 1000));
 
         /// await page.emulateMediaType(pp.MediaType.print);
         /// await page.emulate(pp.puppeteer.devices.laptopWithMDPIScreen);

@@ -50,8 +50,7 @@ class FilePathToImageScreenState extends State<FilePathToImageScreen> {
                   Container(
                     width: 400,
                     alignment: Alignment.topCenter,
-                    decoration:
-                        BoxDecoration(border: Border.all(color: Colors.blue)),
+                    decoration: BoxDecoration(border: Border.all(color: Colors.blue)),
                     child: Image.memory(_bytes!),
                   ),
               ],
@@ -64,12 +63,10 @@ class FilePathToImageScreenState extends State<FilePathToImageScreen> {
   Future<void> _convert() async {
     final stopwatch = Stopwatch()..start();
     final bytes = await WebcontentConverter.filePathToImage(
-      path:
-          _counter.isEven ? 'assets/short_receipt.html' : 'assets/receipt.html',
+      path: _counter.isEven ? 'assets/short_receipt.html' : 'assets/receipt.html',
       executablePath: WebViewHelper.executablePath(),
     );
-    WebcontentConverter.logger
-        .info('completed executed in ${stopwatch.elapsed}');
+    WebcontentConverter.logger.info('completed executed in ${stopwatch.elapsed}');
     setState(() => _counter += 1);
     if (bytes.isNotEmpty) {
       await _saveFile(bytes);

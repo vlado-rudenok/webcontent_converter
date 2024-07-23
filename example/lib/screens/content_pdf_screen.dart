@@ -42,8 +42,7 @@ class ContentToPDFScreenState extends State<ContentToPDFScreen> {
                   child: PdfPreview(
                     build: (format) async => _file!.readAsBytes(),
                     useActions: false,
-                    scrollViewDecoration:
-                        const BoxDecoration(color: Colors.transparent),
+                    scrollViewDecoration: const BoxDecoration(color: Colors.transparent),
                   ),
                 )
               : null,

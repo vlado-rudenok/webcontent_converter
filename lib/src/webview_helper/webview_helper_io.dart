@@ -1,6 +1,5 @@
 import 'dart:io' as io;
-import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform, kIsWeb;
+import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import '../../logger.dart';
 import '../../revision_info.dart';
 
@@ -37,8 +36,7 @@ class WebViewHelper {
         io.Directory('chromium').absolute.path,
       ];
 
-  static List<String> get linuxBrowserAvailablePath =>
-      ['/usr/bin/google-chrome'];
+  static List<String> get linuxBrowserAvailablePath => ['/usr/bin/google-chrome'];
 
   static bool get isChromeAvailable {
     final paths = desktopBrowserAvailablePath;
