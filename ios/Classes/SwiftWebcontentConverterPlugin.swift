@@ -57,6 +57,8 @@ public class SwiftWebcontentConverterPlugin: NSObject, FlutterPlugin {
             let savedPath = URL.init(string: path!)?.path
             let format = arguments!["format"] as? Dictionary<String, Double>
             let margins = arguments!["margins"] as? Dictionary<String, Double>
+            let footerText = arguments!["footerText"] as? String
+            let headerText = arguments!["headerText"] as? String
             self.webView = WKWebView()
             self.webView.isHidden = false
             self.webView.tag = 100
@@ -65,7 +67,13 @@ public class SwiftWebcontentConverterPlugin: NSObject, FlutterPlugin {
                 DispatchQueue.main.asyncAfter(deadline: .now() + (duration!/10000) ) {
                     print("height = \(self.webView.scrollView.contentSize.height)")
                     print("width = \(self.webView.scrollView.contentSize.width)")
-                    guard let path = self.webView.exportAsPdfFromWebView(savedPath: savedPath!, format: format!, margins: margins!) else {
+                    guard let path = self.webView.exportAsPdfFromWebView(
+                        savedPath: savedPath!, 
+                        format: format!, 
+                        margins: margins!,
+                        footerText: footerText,
+                        headerText: headerText) else {
+
                         result(nil)
                         return
                     }
@@ -153,12 +161,18 @@ extension WKWebView {
     }
     
     // Call this function when WKWebView finish loading
-    func exportAsPdfFromWebView(savedPath: String, format: Dictionary<String, Double>, margins: Dictionary<String, Double>) -> String? {
+    func exportAsPdfFromWebView(
+        savedPath: String, 
+        format: Dictionary<String, Double>, 
+        margins: Dictionary<String, Double>,
+        footerText: String?,
+        headerText: String?) -> String? {
+
         let formatter = self.viewPrintFormatter()
         formatter.perPageContentInsets = UIEdgeInsets(top: CGFloat(margins["top"] ?? 0).toPixel(), left:CGFloat(margins["left"] ?? 0).toPixel(), bottom: CGFloat(margins["bottom"] ?? 0).toPixel(), right: CGFloat(margins["right"] ?? 0).toPixel() )
         let page = CGRect(x: 0, y: 0, width: CGFloat(format["width"] ?? 8.27).toPixel(), height: CGFloat(format["height"] ?? 11.27).toPixel() )
         let printable = page.insetBy(dx: 0, dy: 0)
-        let render = CustomPrintPageRenderer(headerText: "47-0412 Faith is Substance - English", footerText: "Page")
+        let render = CustomPrintPageRenderer(headerText: headerText, footerText: footerText)
         render.addPrintFormatter(formatter, startingAtPageAt: 0)
         render.setValue(NSValue(cgRect: page), forKey: "paperRect")
         render.setValue(NSValue(cgRect: printable), forKey: "printableRect")
@@ -194,14 +208,14 @@ class CustomPrintPageRenderer: UIPrintPageRenderer {
     var headerHeightValue: CGFloat
     var footerHeightValue: CGFloat
 
-    let headerText: String
-    let footerText: String
+    let headerText: String?
+    let footerText: String?
 
-    init(headerText: String, footerText: String, headerHeightValue: CGFloat = 50.0, footerHeightValue: CGFloat = 50.0) {
+    init(headerText: String?, footerText: String?, headerHeightValue: CGFloat = 50.0, footerHeightValue: CGFloat = 50.0) {
         self.headerText = headerText
         self.footerText = footerText
-        self.headerHeightValue = headerHeightValue
-        self.footerHeightValue = footerHeightValue
+        self.headerHeightValue = headerText != nil ? headerHeightValue : 0
+        self.footerHeightValue = footerText != nil ? footerHeightValue : 0
     }
     
     override var headerHeight: CGFloat {
@@ -221,30 +235,59 @@ class CustomPrintPageRenderer: UIPrintPageRenderer {
             footerHeightValue = newValue
         }
     }
-    
     override func drawHeaderForPage(at pageIndex: Int, in headerRect: CGRect) {
-        let attributes = [
-            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12),
-            NSAttributedString.Key.foregroundColor: UIColor.gray
+        guard let headerText else {
+            super.drawHeaderForPage(at: pageIndex, in: headerRect)
+            return
+        }
+
+        // Create paragraph style with center alignment and truncating tail
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        paragraphStyle.lineBreakMode = .byTruncatingTail
+
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 12),
+            .foregroundColor: UIColor.gray,
+            .paragraphStyle: paragraphStyle
         ]
 
+        // Calculate the size of the text
         let textSize = headerText.size(withAttributes: attributes)
-        let textRect = CGRect(x: headerRect.midX - textSize.width / 2, y: headerRect.midY - textSize.height / 2, width: textSize.width, height: textSize.height)
 
-        headerText.draw(in: textRect, withAttributes: attributes)
+        // Add padding (20px on both sides)
+        let horizontalPadding: CGFloat = 20
+
+        // Calculate the drawing rectangle centered within the headerRect with padding
+        let textRect = CGRect(
+            x: headerRect.origin.x + horizontalPadding,
+            y: headerRect.midY - (textSize.height / 2),
+            width: headerRect.width - 2 * horizontalPadding,
+            height: textSize.height
+        ).integral // Ensures the rectangle uses whole numbers for coordinates and size
+
+        // Convert headerText to NSString to use draw method
+        let nsHeaderText = headerText as NSString
+
+        // Draw the text in the centered rect with truncation
+        nsHeaderText.draw(in: textRect, withAttributes: attributes)
     }
-    
+
     override func drawFooterForPage(at pageIndex: Int, in footerRect: CGRect) {
-        let footerText = "\(footerText) \(pageIndex + 1)"
+        guard let footerText else {
+            super.drawFooterForPage(at: pageIndex, in: footerRect)
+            return
+        }
+        let text = "\(footerText) \(pageIndex + 1)"
         let attributes = [
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12),
             NSAttributedString.Key.foregroundColor: UIColor.darkGray
         ]
 
-        let textSize = footerText.size(withAttributes: attributes)
+        let textSize = text.size(withAttributes: attributes)
         let textRect = CGRect(x: footerRect.midX - textSize.width / 2, y: footerRect.midY - textSize.height / 2, width: textSize.width, height: textSize.height)
 
-        footerText.draw(in: textRect, withAttributes: attributes)
+        text.draw(in: textRect, withAttributes: attributes)
     }
 
     func generatePdfData() -> NSMutableData {

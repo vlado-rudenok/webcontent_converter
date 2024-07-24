@@ -226,6 +226,8 @@ class WebcontentConverter {
     PdfMargins? margins,
     String? executablePath,
     bool autoClosePage = true,
+    String? footerText,
+    String? headerText,
   }) async {
     final div = html.document.createElement('div') as html.DivElement..setInnerHtml(content, validator: AllowAll());
     div.style.color = 'black';
@@ -241,6 +243,8 @@ class WebcontentConverter {
       'pagebreak': {
         'mode': ['avoid-all', 'css', 'legacy'],
       },
+      if (footerText != null) 'footerText': footerText,
+      if (headerText != null) 'headerText': headerText,
     };
 
     await promiseToFuture(html2pdf(div, jsify(opt)));

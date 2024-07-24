@@ -341,6 +341,8 @@ class WebcontentConverter {
     double duration = 2000,
     PdfMargins? margins,
     String? executablePath,
+    String? footerText,
+    String? headerText,
   }) async {
     final margins0 = margins ?? PdfMargins.zero;
     final arguments = <String, dynamic>{
@@ -349,6 +351,8 @@ class WebcontentConverter {
       'savedPath': savedPath,
       'margins': margins0.toMap(),
       'format': format.toMap(),
+      if (footerText != null) 'footerText': footerText,
+      if (headerText != null) 'headerText': headerText,
     };
     WebcontentConverter.logger.info(arguments['savedPath']);
     WebcontentConverter.logger.info(arguments['margins']);

@@ -122,6 +122,8 @@ class WebcontentConverter {
     PdfMargins? margins,
     String? executablePath,
     bool autoClosePage = true,
+    String? footerText,
+    String? headerText,
   }) async {
     UnimplementedError('contentToPDF');
     return null;
