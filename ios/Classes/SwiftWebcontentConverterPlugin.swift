@@ -23,40 +23,10 @@ public class SwiftWebcontentConverterPlugin: NSObject, FlutterPlugin {
         var duration = arguments!["duration"] as? Double
         if(duration==nil){ duration = 2000.0}
         switch method {
-        case "contentToImage":
-            self.webView = WKWebView()
-            self.webView.isHidden = true
-            self.webView.tag = 100
-            self.webView.loadHTMLString(content!, baseURL: Bundle.main.resourceURL)// load html into hidden webview
-            var bytes = FlutterStandardTypedData.init(bytes: Data() )
-            urlObservation = webView.observe(\.isLoading, changeHandler: { (webView, change) in
-                DispatchQueue.main.asyncAfter(deadline: .now() + (duration!/10000) ) {
-                    let configuration = WKSnapshotConfiguration()
-                    var size = self.webView.scrollView.contentSize
-                    size.height = size.height + 50
-                    print("height = \(size.height)")
-                    configuration.rect = CGRect(origin: .zero, size: size)
-                    self.webView.snapshotView(afterScreenUpdates: true)
-                    self.webView.takeSnapshot(with: configuration) { (image, error) in
-                        guard let data = image!.jpegData(compressionQuality: 1) else {
-                            result( bytes )
-                            self.dispose()
-                            return
-                        }
-                        bytes = FlutterStandardTypedData.init(bytes: data)
-                        result(bytes)
-                        self.dispose()
-                    }
-                    
-                }
-            })
-            
-            break
         case "contentToPDF":
             let path = arguments!["savedPath"] as? String
             let savedPath = URL.init(string: path!)?.path
             let format = arguments!["format"] as? Dictionary<String, Double>
-            let margins = arguments!["margins"] as? Dictionary<String, Double>
             let footerText = arguments!["footerText"] as? String
             let headerText = arguments!["headerText"] as? String
             self.webView = WKWebView()
@@ -70,7 +40,6 @@ public class SwiftWebcontentConverterPlugin: NSObject, FlutterPlugin {
                     guard let path = self.webView.exportAsPdfFromWebView(
                         savedPath: savedPath!, 
                         format: format!, 
-                        margins: margins!,
                         footerText: footerText,
                         headerText: headerText) else {
 
@@ -83,45 +52,10 @@ public class SwiftWebcontentConverterPlugin: NSObject, FlutterPlugin {
                 }
             })
             break
-            
-        case "printPreview":
-            let url = arguments!["url"] as? String?
-            let margins = arguments!["margins"] as? Dictionary<String, Double>
-            let baseURL = url != nil ? URL(string: url!!) : Bundle.main.resourceURL;
-            self.webView = WKWebView()
-            self.webView.isHidden = true
-            self.webView.tag = 100
-            self.webView.loadHTMLString(content!, baseURL: baseURL)// load html into hidden webview
-            urlObservation = webView.observe(\.isLoading, changeHandler: { (webView, change) in
-                DispatchQueue.main.asyncAfter(deadline: .now() + (duration!/10000) ) {
-                    self.createWebPrintJob(webView: webView)
-                    result(nil)
-                    self.dispose()
-                }
-            })
-            break
         default:
             result("iOS " + UIDevice.current.systemVersion)
         }
         
-    }
-    
-    private func createWebPrintJob(webView: WKWebView) {
-        
-        let printInfo = UIPrintInfo(dictionary: nil)
-        let appName = Bundle.main.infoDictionary!["CFBundleName"] as! String
-        printInfo.jobName = "\(appName) print preview"
-        printInfo.outputType = .general
-        let printController =  UIPrintInteractionController.shared
-        
-        printController.printInfo = printInfo
-        let printFormatter = webView.viewPrintFormatter();
-        let defaultBestPaper = UIPrintPaper.bestPaper(forPageSize: CGSize(width: 595, height: 842), withPapersFrom: [])
-        
-        printController.printFormatter = printFormatter
-        printController.present(animated: true, completionHandler: { (data, response, error) in
-            ///Ï
-        })
     }
     
     func dispose() {
@@ -137,43 +71,26 @@ public class SwiftWebcontentConverterPlugin: NSObject, FlutterPlugin {
         }
         self.webView = nil
     }
-    
-    func getPath() -> String {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        let docDirectoryPath = paths[0]
-        let pdfPath = docDirectoryPath.appendingPathComponent("invoice.pdf")
-        print("pdfPath.absoluteString \(pdfPath.absoluteString)")
-        return pdfPath.path
-    }
 }
 
 
 // WKWebView extension for export web html content into pdf
 extension WKWebView {
     
-    func snapshot() -> UIImage?
-    {
-        UIGraphicsBeginImageContextWithOptions(self.bounds.size, true, 0);
-        self.drawHierarchy(in: self.bounds, afterScreenUpdates: true);
-        let snapshotImage = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        return snapshotImage;
-    }
-    
     // Call this function when WKWebView finish loading
     func exportAsPdfFromWebView(
         savedPath: String, 
         format: Dictionary<String, Double>, 
-        margins: Dictionary<String, Double>,
         footerText: String?,
         headerText: String?) -> String? {
 
-        let formatter = self.viewPrintFormatter()
-        formatter.perPageContentInsets = UIEdgeInsets(top: CGFloat(margins["top"] ?? 0).toPixel(), left:CGFloat(margins["left"] ?? 0).toPixel(), bottom: CGFloat(margins["bottom"] ?? 0).toPixel(), right: CGFloat(margins["right"] ?? 0).toPixel() )
-        let page = CGRect(x: 0, y: 0, width: CGFloat(format["width"] ?? 8.27).toPixel(), height: CGFloat(format["height"] ?? 11.27).toPixel() )
+        let width = CGFloat(format["width"] ?? 8.27).toPixel()
+        let height = CGFloat(format["height"] ?? 11.27).toPixel()
+
+        let page = CGRect(x: 0, y: 0, width: width, height: height )
         let printable = page.insetBy(dx: 0, dy: 0)
         let render = CustomPrintPageRenderer(headerText: headerText, footerText: footerText)
-        render.addPrintFormatter(formatter, startingAtPageAt: 0)
+        render.addPrintFormatter(self.viewPrintFormatter(), startingAtPageAt: 0)
         render.setValue(NSValue(cgRect: page), forKey: "paperRect")
         render.setValue(NSValue(cgRect: printable), forKey: "printableRect")
         let pdfData = render.generatePdfData()
